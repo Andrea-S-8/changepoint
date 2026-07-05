@@ -318,7 +318,7 @@ void RegARQuadCostFunc(double *SS, double *phi, int *m, int *n, int *P, int *sta
 
 
 //Find the minimum case
-void min_which(double *data, int *n, double *minval, int *minid){
+static void min_which(double *data, int *n, double *minval, int *minid){
   //data - values for which to find the minimum
   //n - number of items to search
   //minval - minimum value
