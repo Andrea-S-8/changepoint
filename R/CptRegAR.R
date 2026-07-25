@@ -36,13 +36,15 @@ ChangepointRegressionAR <- function(data, phi=0,penalty="MBIC", penalty.value=0,
     stop("Argument 'cpts.only' is invalid.")
   
   # create an extended dataset including the lagged data and lagged regressors - in the columns to the right!
-  #datalag=cbind(data,rbind(rep(0,ncol(data)),data[-nrow(data),]))
-  
+  datalag <- cbind(
+    data,
+    rbind(rep(0,ncol(data)), data[-nrow(data),])
+  )
   
   if(method=="AMOC" && dist=="Normal"){
-    out <- CptRegAR_AMOC_Normal(data, phi,penalty, penalty.value, minseglen, shape, MBIC, tol)
+    out <- CptRegAR_AMOC_Normal(datalag, phi,penalty, penalty.value, minseglen, shape, MBIC, tol)
   }else if(method=="PELT" && dist=="Normal"){
-    out <- CptRegAR_PELT_Normal(data, phi,penalty.value, minseglen, shape,MBIC, tol)
+    out <- CptRegAR_PELT_Normal(datalag, phi,penalty.value, minseglen, shape,MBIC, tol)
   }else{
     stop("Changepoint in regression method not recognised.")
   }
@@ -114,8 +116,8 @@ CptRegAR_PELT_Normal <- function(data, phi=0,penalty.value=0, minseglen=3, shape
                MBIC=as.integer(MBIC),ncheck=integer(n+1))
   
   
-  if(answer$err!=0){
-    stop("C code error:",answer$err,call.=F)
+  if(answer$error!=0){
+    stop("C code error:",answer$error,call.=F)
   }
   return(list(lastchangecpts=answer$lastchangecpts,
               cpts=sort(answer$cpt[answer$cpt>0]), 
