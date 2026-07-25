@@ -228,7 +228,6 @@ checkData = function(data){
 
 cpt.regAR <- function(data, phi=0, penalty="MBIC", pen.value=0, method="AMOC", dist="Normal",
                       class=TRUE, param.estimates=TRUE, minseglen=3, shape = 0, tol = 1e-07){
-  dyn.load('C_cptregAR.so') # load C code
   MBIC=0
   ##Check arguments are valid
   if(!is.array(data) || !is.numeric(data))  ##Further checks applied later
@@ -267,7 +266,7 @@ cpt.regAR <- function(data, phi=0, penalty="MBIC", pen.value=0, method="AMOC", d
   ans <- vector("list",dim(data)[1])
   for(i in 1:dim(data)[1]){  ##To each data set.
     #Check format for ith data set
-    datai <- check_data(data[i,,])
+    datai <- check_data(data[i, , ])
     
     
     #Evaluate penalty value
