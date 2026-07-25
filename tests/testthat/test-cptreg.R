@@ -113,7 +113,7 @@ checkAsymptoticPenalty <- function(methodLog){
     test_that(paste0("Test #",t," :data=", d, "penalty=",penalties[p],", pen.value=", asympenval[[apv]],", method=",methods[m],",class=",cl,", param=",pe,", penvalue=",asympenval[[apv]],", test.stat=",testStats[ts]), {
       if(testStats[ts] == "CUSUM"){
         expect_that(cpt.reg(data=data[[d]], penalty=penalties[p], method=methods[m], test.stat=testStats[ts], class=cl, param.estimates=pe), throws_error())
-        #edit this line to include specific error messsage
+        #edit this line to include specific error message
       }
       else if(is.numeric(asympenval[[apv]]) == FALSE){
         expect_that(cpt.reg(data=data[[d]], penalty=penalties[p], pen.value=asympenval[[apv]], method=methods[m], test.stat=testStats[ts], class=cl, param.estimates=pe), throws_error())
