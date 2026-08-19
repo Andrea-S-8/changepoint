@@ -276,3 +276,115 @@ test_that("GDcpt Changingsig agrees with cptswglobreg.Changingsig", {
     direct$changes
   )
 })
+
+
+
+
+
+test_that("GDcpt ScaledSSE returns expected output", {
+  
+  result <- GDcpt(
+    data = y,
+    Xc = Xc,
+    Xg = Xg,
+    method = "ScaledSSE",
+    order = 1,
+    maxit = 10,
+    GD = FALSE
+  )
+  
+  expect_type(result, "list")
+  
+  expect_true(all(c(
+    "changes",
+    "penloss",
+    "nchanges",
+    "globpars",
+    "grad",
+    "muhatc",
+    "finallike"
+  ) %in% names(result)))
+  
+  expect_true(is.numeric(result$changes))
+  expect_true(is.numeric(result$nchanges))
+  expect_true(is.numeric(result$globpars))
+  expect_true(is.numeric(result$muhatc))
+})
+
+
+
+
+test_that("GDcpt ScaledSSE gives the expected output", {
+  
+  result <- GDcpt(
+    data = y,
+    Xc = Xc,
+    Xg = Xg,
+    method = "ScaledSSE",
+    order = 1,
+    maxit = 10,
+    GD = FALSE
+  )
+  
+  expected_changes <- 72
+  
+  expect_equal(
+    result$changes,
+    expected_changes
+  )
+})
+
+
+
+
+test_that("GDcpt Changingsig returns expected output", {
+  
+  result <- GDcpt(
+    data = y,
+    Xc = Xc,
+    Xg = Xg,
+    method = "Changingsig",
+    order = 1,
+    maxit = 10,
+    GD = FALSE
+  )
+  
+  expect_type(result, "list")
+  
+  expect_true(all(c(
+    "changes",
+    "loglik",
+    "nchanges",
+    "globpars",
+    "grad",
+    "muhatc"
+  ) %in% names(result)))
+  
+  expect_true(is.numeric(result$changes))
+  expect_true(is.numeric(result$nchanges))
+  expect_true(is.numeric(result$globpars))
+  expect_true(is.numeric(result$muhatc))
+})
+
+
+
+
+test_that("GDcpt Changingsig gives the expected output", {
+  
+  result <- GDcpt(
+    data = y,
+    Xc = Xc,
+    Xg = Xg,
+    method = "Changingsig",
+    order = 1,
+    maxit = 10,
+    GD = FALSE
+  )
+  
+  expected_changes <- 72
+  
+  expect_equal(
+    result$changes,
+    expected_changes
+  )
+})
