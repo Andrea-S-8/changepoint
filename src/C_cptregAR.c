@@ -13,6 +13,8 @@
 #include <string.h>
 
 
+
+
 static int *checklist;
 static double *tmplike;
 static double *effects;
@@ -25,11 +27,17 @@ static double *qr;
 static double *Sumstats;
 
 
+
+
 //To register C functions to be read within R!!!
 //void R_init_EnvCpt(DllInfo *info){
 //    R_registerRoutines(info, NULL, NULL, NULL, NULL);
 //    R_useDynamicSymbols(info, TRUE);
 //}
+
+
+
+
 
 
 
@@ -67,6 +75,8 @@ void RegARQuadCost_SS(double *X, int *n, int *nc, double *SS, int *m){
   
   return;
 }
+
+
 
 
 //Evaluate the regression quadratic cost function based on summary statistics
@@ -317,6 +327,8 @@ void RegARQuadCostFunc(double *SS, double *phi, int *m, int *n, int *P, int *sta
 }
 
 
+
+
 //Find the minimum case
 static void min_which(double *data, int *n, double *minval, int *minid){
   //data - values for which to find the minimum
@@ -334,6 +346,10 @@ static void min_which(double *data, int *n, double *minval, int *minid){
   }
   return;
 }
+
+
+
+
 
 
 
@@ -495,6 +511,10 @@ void CptRegAR_Normal_PELT(double *data, double *phi, int *n, int *m, double *pen
 
 
 
+
+
+
+
 //Free allocated memory in case R session has been interrupred
 void Free_CptRegAR_Normal_PELT(int *error){
   // Error code from CptRegAR_Normal_PELT C function, non-zero => error 
@@ -508,9 +528,15 @@ void Free_CptRegAR_Normal_PELT(int *error){
 
 
 
+
+
+
+
 ///////////////////////////////////////
 ///////// NEW VERSION /////////////////
 ///////////////////////////////////////
+
+
 
 
 void RegARCostFunc(double *y, double *design, double *phi, int *n, int *p, int *start, 
@@ -556,7 +582,7 @@ void RegARCostFunc(double *y, double *design, double *phi, int *n, int *p, int *
   for(i=0;i<nn;i++){ // dqrls destroys the first argument so need a copy of design
     for(j=0;j<*p;j++){
       *(qr+i+(j*nn))=*(design+*start+i+(j * *n));
-      //Rprintf("%d, %d, %f \n", i,j,*(qr+i+(j*nn)));
+      // Rprintf("%d, %d, %f \n", i,j,*(qr+i+(j*nn)));
     }
   } // fills the nnxp matrix
   
@@ -569,13 +595,15 @@ void RegARCostFunc(double *y, double *design, double *phi, int *n, int *p, int *
   F77_CALL(dqrls)(qr, &nn, p, y+*start, &ny, tol,
            coef, residuals, effects, rank, pivot, qraux, work);
   
+  // Rprintf("Fit: %f, %f, %f, %f, %f, %f",*(y+*start),*coef, *(coef+1), *residuals, *effects,
+  // *qraux);
   
   // use the residuals and filter by phi
-  double sse=0;
+  double sse=*residuals * *residuals; // starting with first value where resid[-1]=0
   for(i=1;i<nn;i++){ // calculate sum of squared residuals
     sse+=(*(residuals+i) - *phi * *(residuals+i-1)) * (*(residuals+i) - *phi * *(residuals+i-1));
   }
-  
+  // Rprintf("SSE: %f",sse);
   
   if(*scale == 0){
     *like = nn + nn*log(2 * M_PI * sse) - nn*log(nn); //-2*logLik()
@@ -592,6 +620,10 @@ void RegARCostFunc(double *y, double *design, double *phi, int *n, int *p, int *
   free(qr);
   errlike: return;
 }
+
+
+
+
 
 
 
@@ -705,6 +737,8 @@ void CptRegAR_PELT(double *y, double *design, double *phi, int *n, int *p, doubl
     R_CheckUserInterrupt(); //Has interrupted the R session? quits if true.
     
     
+    
+    
     for(i = 0; i < nchecklist; i++){
       //Evaluate cost&penalty based on
       // total cost&pen at last cpt + cost over current segment + penalty
@@ -726,6 +760,8 @@ void CptRegAR_PELT(double *y, double *design, double *phi, int *n, int *p, doubl
     numchangecpts[tstar] = numchangecpts[lastchangecpts[tstar]] + 1;
     
     
+    
+    
     //Prune out non-minimum changes
     nchecktmp = 0;
     for(i = 0; i < nchecklist; i++){
@@ -742,12 +778,20 @@ void CptRegAR_PELT(double *y, double *design, double *phi, int *n, int *p, doubl
     nchecklist = nchecktmp;
     
     
+    
+    
     //Add new cpt to checklist
     checklist[nchecklist] = tstar - *minseglen;
     nchecklist++;
     ncheck[tstar]=nchecklist;
   }
   
+  // start = checklist[0];
+  // tstar=5;
+  // RegARCostFunc(y, design, phi, n, p, &start, &tstar, &segcost,
+  //                                 tol, error, shape, MBIC,
+  //                                 coef, residuals, effects, &rank, pivot, qraux, work);
+  // Rprintf("Null like: %f",segcost);  
   
   //Extract optimal changepoint set
   int ncpts = 0;
@@ -771,6 +815,8 @@ void CptRegAR_PELT(double *y, double *design, double *phi, int *n, int *p, doubl
 }
 
 
+
+
 //Free allocated memory in case R session has been interrupted
 void Free_CptRegAR_PELT_new(int *error){
   // Error code from CptRegAR_Normal_PELT C function, non-zero => error 
@@ -786,6 +832,22 @@ void Free_CptRegAR_PELT_new(int *error){
     free((void *)tmplike);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -877,6 +939,8 @@ void CptRegAR_Normal_AMOC(double *data, double *phi, int *n, int *m, double *pen
   err2: free(Sumstats);
   err1: return;
 }
+
+
 
 
 //Free allocated memory in case R session has been interrupred
