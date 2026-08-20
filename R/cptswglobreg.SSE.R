@@ -117,7 +117,7 @@ cptswglobreg.SSE=function(data,Xc,Xg,order=1,maxit,pen0=NULL,GD=TRUE,
       segport=seg1/n
       
       
-      Xcpts[,1:nc]=rbind(Xc[seg1,],matrix(nrow=n-cpts[1],ncol=nc,0))
+      Xcpts[,1:nc]=rbind(Xc[seg1, ,drop=FALSE],matrix(nrow=n-cpts[1],ncol=nc,0))
       # Create remaining segment-specific regressors
       for(i in 2:(length(tch)-1)){
         seg=(tch[i]+1):tch[i+1]
@@ -125,7 +125,7 @@ cptswglobreg.SSE=function(data,Xc,Xg,order=1,maxit,pen0=NULL,GD=TRUE,
           segport,
           seg/n
         )
-        Xtmp=Xc[seg,]
+        Xtmp=Xc[seg, ,drop=FALSE]
         Xcpts[,(nc*(i-1)+1):(nc*i)]=rbind(matrix(nrow=tch[i],ncol=nc,0),Xtmp,
           matrix(nrow=n-tch[i+1],ncol=nc,0))
       }
@@ -238,33 +238,12 @@ cptswglobreg.SSE=function(data,Xc,Xg,order=1,maxit,pen0=NULL,GD=TRUE,
       ncol=ncpts*nc
     )
     seg1=1:cpts[1]
-    Xcpts[,1:nc]=rbind(
-      Xc[seg1,],
-      matrix(
-        nrow=n-cpts[1],
-        ncol=nc,
-        0
-      )
-    )
+    Xcpts[,1:nc]=rbind(Xc[seg1, ,drop=FALSE],matrix(nrow=n-cpts[1],ncol=nc,0))
     for(i in 2:(length(tch)-1)){
       seg=(tch[i]+1):tch[i+1]
-      Xtmp=Xc[seg,]
-      Xcpts[
-        ,
-        (nc*(i-1)+1):(nc*i)
-      ]=rbind(
-        matrix(
-          nrow=tch[i],
-          ncol=nc,
-          0
-        ),
-        Xtmp,
-        matrix(
-          nrow=n-tch[i+1],
-          ncol=nc,
-          0
-        )
-      )
+      Xtmp=Xc[seg, ,drop=FALSE]
+      Xcpts[,(nc*(i-1)+1):(nc*i)]=rbind(matrix(nrow=tch[i],ncol=nc,0),
+        Xtmp,matrix(nrow=n-tch[i+1],ncol=nc,0))
     }
   }
   
