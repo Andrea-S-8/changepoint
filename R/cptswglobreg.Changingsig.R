@@ -98,16 +98,16 @@ cptswglobreg.Changingsig=function(data,Xc,Xg, order=1, maxit,pen0=NULL,phi=0,
       tch=c(0,cpts,n)
       nc=ncol(Xc)
       ncpts=length(cpts)+1
-      Xcpts=matrix(nrow=n,ncol=ncpts*nc)
+      Xcpts=matrix(NA,nrow=n,ncol=ncpts*nc)
       seg1=1:cpts[1]
       nch=length(tch)-1
       
       
-      Xcpts[,1:(nc)]=rbind(Xc[seg1,],matrix(nrow=n-cpts[1],ncol=(nc),0))
+      Xcpts[,1:(nc)]=rbind(Xc[seg1, ,drop=FALSE],matrix(nrow=n-cpts[1],ncol=(nc),0))
       #CREATE SEGMENT X
       for(i in 2:(length(tch)-1)){
         seg=(tch[i]+1):tch[i+1]
-        Xtmp=Xc[seg,]
+        Xtmp=Xc[seg, ,drop=FALSE]
         Xcpts[,(nc*(i-1)+1):(nc*i)]=rbind(matrix(nrow=tch[i],ncol=nc,0),Xtmp,matrix(nrow=n-tch[i+1],ncol=nc,0))
         
       } 
