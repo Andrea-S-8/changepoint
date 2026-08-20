@@ -107,7 +107,8 @@ CptRegAR_PELT_Normal <- function(data, phi=0,penalty.value=0, minseglen=3, shape
   on.exit(.C("Free_CptRegAR_PELT_new",answer[[6]]))
   
   y=data[,1]
-  design=data[,-1]
+  design=data[,-1,drop=FALSE]
+  p=as.integer(ncol(design))
   answer <- .C("CptRegAR_PELT", y=y,design=design, phi=as.double(phi),n=as.integer(n),
                p=as.integer(ncol(design)), pen=as.double(penalty.value), cptsout=integer(n),
                error=0L, shape=as.double(shape), minseglen=as.integer(minseglen), 
