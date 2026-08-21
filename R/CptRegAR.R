@@ -59,7 +59,7 @@ ChangepointRegressionAR <- function(data, phi=0,penalty="MBIC", penalty.value=0,
 CptRegAR_AMOC_Normal <- function(data, phi=0,penalty="MBIC", penalty.value=0, minseglen=3,
                                  shape=0, MBIC=0, tol=1e-07){
   n <- as.integer(nrow(data))
-  p <- as.integer(ncol(data)/2 -1)
+  p <- as.integer(ncol(data) -1)
   if(p<1 || n<p) stop("Invalid data dimensions.")
   #tol <- 1e-07 #Rank tolerance (see lm.fit)
   #shape <- -1 #-1=RSS,0=-2logLik,>0=-2logLik with this fixed variance
